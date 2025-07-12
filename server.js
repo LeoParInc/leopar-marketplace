@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 8080; // Railway will provide PORT
 
 // Serve static files (CSS/JS/images)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'root')));
 
 // Serve HTML for all routes (SPA-style)
 app.get('*', (req, res) => {
