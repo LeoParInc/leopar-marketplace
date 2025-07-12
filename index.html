@@ -1,116 +1,54 @@
+# Online Marketplace
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>LeoPar Marketplace</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* [All your existing CSS remains exactly the same] */
-    body {
-      background: #121212;
-      color: #fff;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    /* ... [rest of your CSS] ... */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- [All your existing HTML remains exactly the same] -->
-  <header>
-    <h1>LeoPar Marketplace</h1>
-    <div>
-      <button id="adminBtn">Admin Login</button>
-      <button id="logoutBtn">Logout</button>
-      <button id="viewSalesBtn">View Sales Log</button>
-    </div>
-  </header>
-  <!-- ... [rest of your HTML] ... -->
-
-<script>
-// ===== FIREBASE INIT =====
-const firebaseConfig = {
-  apiKey: "AIzaSyCryOFADPjV2c3_mFuq4OJWiNHWDI-mWbI",
-  databaseURL: "https://leopar-marketplace-default-rtdb.firebaseio.com"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ===== DATA INIT =====
-const defaultProducts = [
-  { id: 1, title: "✅Grow A Garden: DRAGONFLY", price: 0, description: "", stripe: "" },
-  // ... [all your other default products] ...
-];
-
-let products = [];
-let cart = [];
-let giftCodes = {};
-let appliedGift = 0;
-let isAdmin = false;
-let salesLog = [];
-
-// ===== CORE FUNCTIONS (MODIFIED FOR FIREBASE) =====
-function getUserId() {
-  let userId = localStorage.getItem('userId');
-  if (!userId) {
-    userId = 'user_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('userId', userId);
-  }
-  return userId;
-}
-
-function saveProducts() {
-  db.ref('products').set(products);
-}
-
-function updateCart() {
-  // ... [your existing cart UI code] ...
-  db.ref('carts/' + getUserId()).set(cart);
-}
-
-function addGiftCode() {
-  const code = document.getElementById("newGiftCode").value.trim();
-  const val = parseFloat(document.getElementById("newGiftValue").value);
-  if (!code || isNaN(val)) return alert("Invalid input");
-  giftCodes[code] = val;
-  db.ref('giftCodes').set(giftCodes);
-  alert("Gift code added");
-}
-
-// ===== INITIAL LOAD =====
-db.ref('products').on('value', (snapshot) => {
-  products = snapshot.val() || defaultProducts;
-  renderProducts();
-});
-
-db.ref('carts/' + getUserId()).on('value', (snapshot) => {
-  cart = snapshot.val() || [];
-  updateCart();
-});
-
-db.ref('giftCodes').on('value', (snapshot) => {
-  giftCodes = snapshot.val() || {};
-});
-
-// ===== YOUR EXISTING FUNCTIONS (UNCHANGED) =====
-function renderProducts() { /* ... */ }
-function applyGiftCode() { /* ... */ }
-function addProduct() { /* ... */ }
-function validateEmail() { /* ... */ }
-// ... [all other existing functions] ...
-
-// ===== INITIAL RENDER =====
-renderProducts();
-</script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
-
+    <header>
+        <h1>Welcome to Our Online Marketplace</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home">
+            <h2>Your One-Stop Shop</h2>
+            <p>Discover a wide range of products at unbeatable prices.</p>
+        </section>
+        <section id="products">
+            <h2>Featured Products</h2>
+            <div class="product">
+                <h3>Product 1</h3>
+                <p>Description of Product 1.</p>
+                <button>Add to Cart</button>
+            </div>
+            <div class="product">
+                <h3>Product 2</h3>
+                <p>Description of Product 2.</p>
+                <button>Add to Cart</button>
+            </div>
+        </section>
+        <section id="about">
+            <h2>About Us</h2>
+            <p>We are dedicated to providing the best online shopping experience.</p>
+        </section>
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Email: support@onlinemarketplace.com</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Online Marketplace. All rights reserved.</p>
+    </footer>
 </body>
 </html>
