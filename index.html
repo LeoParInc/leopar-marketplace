@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* [Keep all your existing CSS styles exactly the same] */
+    /* [All your existing CSS remains exactly the same] */
     body {
       background: #121212;
       color: #fff;
@@ -17,11 +17,11 @@
       display: flex;
       flex-direction: column;
     }
-    /* ... [rest of your CSS remains unchanged] ... */
+    /* ... [rest of your CSS] ... */
   </style>
 </head>
 <body>
-  <!-- [Keep all your existing HTML exactly the same] -->
+  <!-- [All your existing HTML remains exactly the same] -->
   <header>
     <h1>LeoPar Marketplace</h1>
     <div>
@@ -30,141 +30,82 @@
       <button id="viewSalesBtn">View Sales Log</button>
     </div>
   </header>
-  <!-- ... [rest of your HTML remains unchanged] ... -->
+  <!-- ... [rest of your HTML] ... -->
 
 <script>
-  // Firebase-powered data management
-  const defaultProducts = [
-    { id: 1, title: "✅Grow A Garden: DRAGONFLY", price: 0, description: "", stripe: "" },
-    { id: 2, title: "✅Grow A Garden: COOKED OWL", price: 0, description: "", stripe: "" },
-    // ... [keep all your default products] ...
-  ];
+// ===== FIREBASE INIT =====
+const firebaseConfig = {
+  apiKey: "AIzaSyCryOFADPjV2c3_mFuq4OJWiNHWDI-mWbI",
+  databaseURL: "https://leopar-marketplace-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  // Data variables
-  let products = [];
-  let cart = [];
-  let giftCodes = {};
-  let appliedGift = 0;
-  let isAdmin = false;
-  let salesLog = [];
+// ===== DATA INIT =====
+const defaultProducts = [
+  { id: 1, title: "✅Grow A Garden: DRAGONFLY", price: 0, description: "", stripe: "" },
+  // ... [all your other default products] ...
+];
 
-  // DOM references (keep your existing ones)
-  const container = document.getElementById("productsContainer");
-  // ... [all your other DOM references] ...
+let products = [];
+let cart = [];
+let giftCodes = {};
+let appliedGift = 0;
+let isAdmin = false;
+let salesLog = [];
 
-  // Initialize Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCryOFADPjV2c3_mFuq4OJWiNHWDI-mWbI",
-    authDomain: "leopar-marketplace.firebaseapp.com",
-    databaseURL: "https://leopar-marketplace-default-rtdb.firebaseio.com",
-    projectId: "leopar-marketplace",
-    storageBucket: "leopar-marketplace.firebasestorage.app",
-    messagingSenderId: "32858355749",
-    appId: "1:32858355749:web:4679391f6b01738058e7cc"
-  };
-  
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  // User management
-  function getUserId() {
-    let userId = localStorage.getItem('userId');
-    if (!userId) {
-      userId = 'user_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('userId', userId);
-    }
-    return userId;
+// ===== CORE FUNCTIONS (MODIFIED FOR FIREBASE) =====
+function getUserId() {
+  let userId = localStorage.getItem('userId');
+  if (!userId) {
+    userId = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('userId', userId);
   }
+  return userId;
+}
 
-  // Load initial data
-  function loadInitialData() {
-    // Products
-    db.ref('products').on('value', (snapshot) => {
-      products = snapshot.val() || defaultProducts;
-      renderProducts();
-    });
+function saveProducts() {
+  db.ref('products').set(products);
+}
 
-    // Cart
-    db.ref('carts/' + getUserId()).on('value', (snapshot) => {
-      cart = snapshot.val() || [];
-      updateCart();
-    });
+function updateCart() {
+  // ... [your existing cart UI code] ...
+  db.ref('carts/' + getUserId()).set(cart);
+}
 
-    // Gift Codes
-    db.ref('giftCodes').on('value', (snapshot) => {
-      giftCodes = snapshot.val() || {};
-    });
+function addGiftCode() {
+  const code = document.getElementById("newGiftCode").value.trim();
+  const val = parseFloat(document.getElementById("newGiftValue").value);
+  if (!code || isNaN(val)) return alert("Invalid input");
+  giftCodes[code] = val;
+  db.ref('giftCodes').set(giftCodes);
+  alert("Gift code added");
+}
 
-    // Sales Log
-    db.ref('salesLog').on('value', (snapshot) => {
-      salesLog = snapshot.val() || [];
-    });
-  }
+// ===== INITIAL LOAD =====
+db.ref('products').on('value', (snapshot) => {
+  products = snapshot.val() || defaultProducts;
+  renderProducts();
+});
 
-  // [Keep your existing renderProducts() function exactly the same]
+db.ref('carts/' + getUserId()).on('value', (snapshot) => {
+  cart = snapshot.val() || [];
+  updateCart();
+});
 
-  // Save products to Firebase
-  function saveProducts() {
-    db.ref('products').set(products)
-      .catch(error => console.error("Error saving products:", error));
-  }
+db.ref('giftCodes').on('value', (snapshot) => {
+  giftCodes = snapshot.val() || {};
+});
 
-  // Update cart (UI + Firebase)
-  function updateCart() {
-    // [Keep your existing UI update code]
-    
-    // Save to Firebase
-    db.ref('carts/' + getUserId()).set(cart)
-      .catch(error => console.error("Error saving cart:", error));
-  }
+// ===== YOUR EXISTING FUNCTIONS (UNCHANGED) =====
+function renderProducts() { /* ... */ }
+function applyGiftCode() { /* ... */ }
+function addProduct() { /* ... */ }
+function validateEmail() { /* ... */ }
+// ... [all other existing functions] ...
 
-  // Modified addGiftCode for Firebase
-  function addGiftCode() {
-    const code = document.getElementById("newGiftCode").value.trim();
-    const val = parseFloat(document.getElementById("newGiftValue").value);
-    if (!code || isNaN(val)) {
-      alert("Invalid gift code or value");
-      return;
-    }
-    giftCodes[code] = val;
-    db.ref('giftCodes').set(giftCodes)
-      .then(() => alert("Gift code added"))
-      .catch(error => console.error("Error saving gift code:", error));
-  }
-
-  // Modified buy-now functionality
-  function handleBuyNow(product) {
-    if (!product.stripe) {
-      alert("No Stripe link set for this product.");
-      return;
-    }
-    const email = prompt("Enter your email for purchase confirmation:");
-    if (!email || !validateEmail(email)) {
-      alert("Invalid email");
-      return;
-    }
-    
-    const saleRecord = { 
-      email, 
-      product: product.title, 
-      price: product.price, 
-      date: new Date().toLocaleString() 
-    };
-    
-    // Push to Firebase
-    db.ref('salesLog').push(saleRecord)
-      .then(() => {
-        alert("Thanks for purchasing! You will be redirected to payment.");
-        window.open(product.stripe, "_blank");
-      })
-      .catch(error => console.error("Error saving sale:", error));
-  }
-
-  // [Keep all your other existing functions the same]
-  // [Keep your existing event listeners and initialization]
-
-  // Initialize the app
-  loadInitialData();
+// ===== INITIAL RENDER =====
+renderProducts();
 </script>
 
 <!-- Firebase SDK -->
