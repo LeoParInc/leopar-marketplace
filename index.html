@@ -559,6 +559,22 @@
   renderProducts();
   updateCart();
 </script>
-
+<!-- Add before </body> -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCryOFADPjV2c3_mFuq4OJWiNHWDI-mWbI",
+    authDomain: "leopar-marketplace.firebaseapp.com",
+    databaseURL: "https://leopar-marketplace-default-rtdb.firebaseio.com",
+    projectId: "leopar-marketplace",
+    storageBucket: "leopar-marketplace.firebasestorage.app",
+    messagingSenderId: "32858355749",
+    appId: "1:32858355749:web:4679391f6b01738058e7cc"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+  
 </body>
 </html>
